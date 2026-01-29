@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rag-gateway
+  namespace: llm-d
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rag-gateway
+  template:
+    metadata:
+      labels:
+        app: rag-gateway
+    spec:
+      containers:
+        - name: rag-gateway
+          image: rag-llm-d:latest
+          imagePullPolicy: Never  # Use minikube local image
+          command: ["uvicorn", "rag.gateway.app:app", "--host", "0.0.0.0", "--port", "8080"]
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: MILVUS_HOST
+              value: "milvus-standalone.milvus.svc.cluster.local"
+            - name: MILVUS_PORT
+              value: "19530"
+            - name: LLMD_GATEWAY_URL
+              value: "http://llm-d-gateway.llm-d.svc.cluster.local:80"
+            - name: MODEL_NAME
+              value: "open-llama-7b"
+            - name: MAX_TOKENS
+              value: "512"
+            - name: TEMPERATURE
+              value: "0.7"
+          resources:
+            requests:
+              cpu: "2"
+              memory: "4Gi"
+            limits:
+              cpu: "4"
+              memory: "6Gi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30

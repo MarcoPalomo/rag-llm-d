@@ -1,0 +1,10 @@
+apiVersion: inference.networking.x-k8s.io/v1alpha2
+kind: InferenceModel
+metadata:
+  name: open-llama-7b
+  namespace: llm-d
+spec:
+  modelName: open-llama-7b
+  criticality: Standard
+  poolRef:
+    name: open-llama-pool

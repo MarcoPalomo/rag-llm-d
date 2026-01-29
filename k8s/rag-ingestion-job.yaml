@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: rag-ingestion
+  namespace: llm-d
+spec:
+  backoffLimit: 2
+  template:
+    spec:
+      containers:
+        - name: ingest
+          image: rag-llm-d:latest
+          imagePullPolicy: Never  # Use minikube local image
+          command: ["python", "-m", "rag.ingestion.ingest"]
+          args: ["--input-dir", "/data/documents"]
+          env:
+            - name: MILVUS_HOST
+              value: "milvus-standalone.milvus.svc.cluster.local"
+            - name: MILVUS_PORT
+              value: "19530"
+          resources:
+            requests:
+              cpu: "2"
+              memory: "4Gi"
+            limits:
+              cpu: "4"
+              memory: "6Gi"
+          volumeMounts:
+            - name: documents
+              mountPath: /data/documents
+              readOnly: true
+      volumes:
+        - name: documents
+          persistentVolumeClaim:
+            claimName: rag-documents
+      restartPolicy: OnFailure

@@ -1,0 +1,12 @@
+apiVersion: inference.networking.x-k8s.io/v1alpha2
+kind: InferencePool
+metadata:
+  name: open-llama-pool
+  namespace: llm-d
+spec:
+  targetPortNumber: 8000
+  selector:
+    matchLabels:
+      app: open-llama-7b
+  extensionRef:
+    name: llm-d-epp
