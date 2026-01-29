@@ -1,0 +1,9 @@
+# llm-d infrastructure - Gateway API + Envoy Gateway
+# Installs CRDs and the gateway controller for inference routing.
+#
+# Ref: https://github.com/llm-d-incubation/llm-d-infra
+
+# Use default Envoy Gateway setup.
+# For minikube, the gateway service will be ClusterIP;
+# access via `minikube tunnel` or port-forward.
+{}

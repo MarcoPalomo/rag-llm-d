@@ -1,0 +1,40 @@
+# Milvus standalone - minimal local dev configuration
+# Deploys a single pod with embedded etcd and local storage.
+# No MinIO, no Pulsar, no external dependencies.
+
+cluster:
+  enabled: false
+
+etcd:
+  enabled: false
+
+pulsar:
+  enabled: false
+
+minio:
+  enabled: false
+
+standalone:
+  messageQueue: rocksmq
+  resources:
+    requests:
+      cpu: "1"
+      memory: "2Gi"
+    limits:
+      cpu: "2"
+      memory: "4Gi"
+  persistence:
+    enabled: true
+    persistentVolumeClaim:
+      storageClass: standard
+      size: 10Gi
+
+extraConfigFiles:
+  user.yaml: |+
+    etcd:
+      use:
+        embed: true
+      data:
+        dir: /var/lib/milvus/etcd
+    common:
+      storageType: local

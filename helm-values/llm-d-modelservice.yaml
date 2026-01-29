@@ -1,0 +1,29 @@
+# llm-d model service - vLLM serving the GPTQ model
+# Ref: https://github.com/llm-d-incubation/llm-d-modelservice
+
+model:
+  name: open-llama-7b
+  uri: "hf://nkpz/open_llama_7b_qlora_uncensored-gptq"
+
+vllm:
+  extraArgs:
+    - "--quantization=gptq"
+    - "--enable-prefix-caching"
+    - "--gpu-memory-utilization=0.85"
+    - "--max-model-len=4096"
+    - "--dtype=half"
+
+replicas: 1
+
+resources:
+  requests:
+    nvidia.com/gpu: "1"
+    memory: "12Gi"
+    cpu: "4"
+  limits:
+    nvidia.com/gpu: "1"
+    memory: "16Gi"
+    cpu: "6"
+
+# HuggingFace token secret (created via k8s/secrets.yaml)
+huggingFaceSecret: llm-d-hf-token
